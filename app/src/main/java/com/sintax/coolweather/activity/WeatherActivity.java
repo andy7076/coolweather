@@ -16,6 +16,8 @@ import com.sintax.coolweather.util.HttpCallBackListener;
 import com.sintax.coolweather.util.HttpUtil;
 import com.sintax.coolweather.util.Utility;
 
+import static com.sintax.coolweather.R.id.publish_time;
+
 public class WeatherActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView cityName;
@@ -34,13 +36,13 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_weather);
         initComponents();
         String countryCode = getIntent().getStringExtra("country_code");
-        if (!TextUtils.isEmpty(countryCode)){
+        if (!TextUtils.isEmpty(countryCode)) {
             //有县级代号时就去查询天气
             publishTime.setText("同步中...");
             weatherInfo.setVisibility(View.INVISIBLE);
             cityName.setVisibility(View.INVISIBLE);
             queryWeatherCode(countryCode);
-        }else{
+        } else {
             //没有县级代号时就直接显示本地天气
             showWeather();
         }
@@ -51,46 +53,48 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void showWeather() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        cityName.setText(sp.getString("city_name",""));
-        curTemp1.setText(sp.getString("temp1",""));
-        curTemp2.setText(sp.getString("temp2",""));
-        curWeather.setText(sp.getString("cur_weather",""));
-        publishTime.setText(sp.getString("publish_time",""));
-        curDate.setText(sp.getString("cur_date",""));
+        cityName.setText(sp.getString("city_name", ""));
+        curTemp1.setText(sp.getString("temp1", ""));
+        curTemp2.setText(sp.getString("temp2", ""));
+        curWeather.setText(sp.getString("cur_weather", ""));
+        publishTime.setText("今天"+sp.getString("publish_time", "")+"发布");
+        curDate.setText(sp.getString("cur_date", ""));
         weatherInfo.setVisibility(View.VISIBLE);
         cityName.setVisibility(View.VISIBLE);
     }
 
     /**
      * 查询县级代号所对应的天气代号
+     *
      * @param countryCode
      */
     private void queryWeatherCode(String countryCode) {
-        String address = "http://www.weather.com.cn/data/list3/city"+countryCode+".xml";
-        queryFromServer(address,"countryCode");
+        String address = "http://www.weather.com.cn/data/list3/city" + countryCode + ".xml";
+        queryFromServer(address, "countryCode");
     }
 
     /**
      * 根据传入的地址和类型去向服务器查询天气代号或者天气信息
+     *
      * @param address
      * @param type
      */
-    private void queryFromServer(final String address,final String type) {
+    private void queryFromServer(final String address, final String type) {
         HttpUtil.sendHttpRequest(address, new HttpCallBackListener() {
             @Override
-            public void onFinish(String response) {
-                if (type.equals("countryCode")){
-                    if (!TextUtils.isEmpty(response)){
+            public void onFinish(final String response) {
+                if (type.equals("countryCode")) {
+                    if (!TextUtils.isEmpty(response)) {
                         //从服务器返回的数据中解析出天气代号
                         String[] array = response.split("\\|");
-                        if (array!=null && array.length ==  2){
+                        if (array != null && array.length == 2) {
                             String weatherCode = array[1];
                             queryWeatherInfo(weatherCode);
                         }
                     }
-                }else if(type.equals("weatherCode")){
+                } else if (type.equals("weatherCode")) {
                     //处理从服务器返回的天气信息
-                    Utility.handleWeatherResponse(WeatherActivity.this,response);
+                    Utility.handleWeatherResponse(WeatherActivity.this, response);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -112,9 +116,9 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-    private void initComponents(){
+    private void initComponents() {
         cityName = (TextView) findViewById(R.id.city_name);
-        publishTime = (TextView) findViewById(R.id.publish_time);
+        publishTime = (TextView) findViewById(publish_time);
         curDate = (TextView) findViewById(R.id.cur_date);
         curWeather = (TextView) findViewById(R.id.cur_weather);
         curTemp1 = (TextView) findViewById(R.id.cur_temp1);
@@ -129,18 +133,18 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.refresh:
                 publishTime.setText("同步中...");
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-                String weatherCode = sp.getString("weather_code","");
-                if (!TextUtils.isEmpty(weatherCode)){
+                String weatherCode = sp.getString("weather_code", "");
+                if (!TextUtils.isEmpty(weatherCode)) {
                     queryWeatherInfo(weatherCode);
                 }
                 break;
             case R.id.choose_city:
-                Intent intent = new Intent(this,ChooseAreaActivity.class);
-                intent.putExtra("from_weather_activity",true);
+                Intent intent = new Intent(this, ChooseAreaActivity.class);
+                intent.putExtra("from_weather_activity", true);
                 startActivity(intent);
                 finish();
                 break;
@@ -149,10 +153,11 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
 
     /**
      * 查询天气代号所对应的天气
+     *
      * @param weatherCode
      */
     private void queryWeatherInfo(String weatherCode) {
-        String address = "http://www.weather.com.cn/data/cityinfo/"+weatherCode+".html";
-        queryFromServer(address,"weatherCode");
+        String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html";
+        queryFromServer(address, "weatherCode");
     }
 }

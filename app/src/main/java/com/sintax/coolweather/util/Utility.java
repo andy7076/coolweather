@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.sintax.coolweather.db.CoolWeatherDB;
 import com.sintax.coolweather.model.City;
@@ -101,9 +102,10 @@ public class Utility {
      */
     public static void handleWeatherResponse(Context context,String response){
         try {
+            Log.i("tgr", "handleWeatherResponse: "+response);
             JSONObject jsonObject = new JSONObject(response);
             JSONObject weatherInfo = jsonObject.getJSONObject("weatherinfo");
-            String cityName = weatherInfo.getString("cityName");
+            String cityName = weatherInfo.getString("city");
             String weatherCode = weatherInfo.getString("cityid");
             String temp1 = weatherInfo.getString("temp1");
             String temp2 = weatherInfo.getString("temp2");
@@ -125,9 +127,9 @@ public class Utility {
      * @param curWeather
      * @param publishTime
      */
-    private static void saveWeatherInfo(Context context, String cityName, String weatherCode, String temp1,
+    public static void saveWeatherInfo(Context context, String cityName, String weatherCode, String temp1,
                                         String temp2, String curWeather, String publishTime) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putBoolean("city_selected",true);
         editor.putString("city_name",cityName);
