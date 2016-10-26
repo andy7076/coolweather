@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 2016/9/19.
+ * Created by Administrator on 2016/9/19.佛挡杀佛挡杀佛
  */
 public class CoolWeatherDB {
 
