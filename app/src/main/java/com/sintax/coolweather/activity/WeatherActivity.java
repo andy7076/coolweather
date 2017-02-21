@@ -38,10 +38,10 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
         String countryCode = getIntent().getStringExtra("country_code");
         if (!TextUtils.isEmpty(countryCode)) {
             //有县级代号时就去查询天气
-            publishTime.setText("同步中...");
-            weatherInfo.setVisibility(View.INVISIBLE);
-            cityName.setVisibility(View.INVISIBLE);
-            queryWeatherCode(countryCode);
+            //publishTime.setText("同步中...");
+            //weatherInfo.setVisibility(View.INVISIBLE);
+            //cityName.setVisibility(View.INVISIBLE);
+            //queryWeatherCode(countryCode);
         } else {
             //没有县级代号时就直接显示本地天气
             showWeather();
